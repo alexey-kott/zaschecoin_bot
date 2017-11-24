@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re
 import json
 import datetime
@@ -35,6 +36,10 @@ def za_schekoi(m):
 	u = User.cog(m)
 	bot.send_message(sid(m), s.balance.format(u.balance), reply_to_message_id = m.message_id)
 
+
+@bot.message_handler(commands = ['za_scheku'])
+def za_scheku(m):
+	u = User.cog(m)
 
 @bot.message_handler(content_types = ['text'])
 def reply(m):

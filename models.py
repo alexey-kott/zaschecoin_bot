@@ -1,4 +1,5 @@
 import hashlib
+from random import randint
 
 from peewee import *
 from telebot import TeleBot
@@ -38,6 +39,26 @@ class User(BaseModel):
 			return User.select().where(User.user_id == uid(m)).get()
 
 
+class System(BaseModel):
+	border 	 = IntegerField()
+	rng		 = IntegerField()
+
+	@staticmethod
+	def get():
+		system = System.get(System.id == 1)
+		return system
+
+	@staticmethod
+	def init():
+		System.create_table(fail_silently = True)
+		if System.select().where().count() == 1:
+			return
+
+		n_pow = 48 # power of n
+		System.create(border = randint(1, 10**n_pow), value = int(n_pow / 2))
+
+
+
 class Message(BaseModel):
 	msg_id 		= IntegerField(primary_key = True)
 	chat_id 	= IntegerField()
@@ -49,10 +70,10 @@ class Message(BaseModel):
 	# @staticmethod
 	def mine(m):
 		pass
-	# 	text = m.text.encode("utf-8")
-	# 	msg_hash = hashlib.sha1()
-	# 	msg_hash.update(text)
-	# 	int_hash = int(msg_hash.hexdigest(), 16) # хеш текста сообщения в целочисленном представлении
-	# 	msg_id = m.message_id
-	# 	msg = Message.
+		text = m.text.encode("utf-8")
+		msg_hash = hashlib.sha1()
+		msg_hash.update(text)
+		int_hash = int(msg_hash.hexdigest(), 16) # хеш текста сообщения в целочисленном представлении
+		msg_id = m.message_id
+		# msg = Message.
 
