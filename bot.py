@@ -38,10 +38,12 @@ def init(m):
 @bot.message_handler(commands = ['za_schekoi'])
 def za_schekoi(m):
 	u = User.cog(m)
-	# if u.username == "squizduos":
-	# 	bot.send_message(sid(m), "У тебя ОГРОМНЫЙ ХУИЩЕ за щекой", reply_to_message_id = m.message_id)	
-	# else:
-	bot.send_message(sid(m), s.balance.format(u.balance), reply_to_message_id = m.message_id)
+	try:
+		target_username = re.findall(r'(?<=\s@)\w+', m.text)[0]
+		target = User.get(User.username == target_username)
+		bot.send_message(sid(m), s.target_balance.format(target.username, target.balance), reply_to_message_id = m.message_id)
+	except:
+		bot.send_message(sid(m), s.balance.format(u.balance), reply_to_message_id = m.message_id)
 
 
 @bot.message_handler(commands = ['za_scheku'])
