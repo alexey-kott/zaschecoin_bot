@@ -7,10 +7,11 @@ from time import sleep
 
 import sqlite3 as sqlite
 from telebot import TeleBot, types
-from peewee import *
+
 
 from config import *
 import strings as s # все строки хранятся здесь
+from models import User, System, Message
 
 bot = TeleBot(token)
 
@@ -18,30 +19,7 @@ sid = lambda m: m.chat.id # лямбды для определения адре�
 uid = lambda m: m.from_user.id
 cid = lambda c: c.message.chat.id
 
-db = SqliteDatabase('db.sqlite3')
 
-class BaseModel(Model):
-	class Meta:
-		database = db
-
-class User(BaseModel):
-	user_id = IntegerField(primary_key = True)
-	username = TextField(null = True)
-	first_name = TextField()
-	last_name = TextField(null = True)
-	balance = IntegerField(default = 3)
-	
-	def cog(m):
-		username = m.from_user.username
-		first_name = m.from_user.first_name
-		last_name = m.from_user.last_name
-		try:
-			with db.atomic():
-				u = User.create(user_id = uid(m), username = username, first_name = first_name, last_name = last_name)
-				bot.send_message(sid(m), s.greeting, reply_to_message_id = m.message_id)
-				return u
-		except Exception as e:
-			return User.select().where(User.user_id == uid(m)).get()
 
 
 @bot.message_handler(commands = ['ping'])
@@ -52,6 +30,10 @@ def ping(m):
 @bot.message_handler(commands = ['init'])
 def init(m):
 	User.create_table(fail_silently = True)
+	Message.create_table(fail_silently = True)
+	System.create_table(fail_silently = True)
+	System.init()
+
 
 @bot.message_handler(commands = ['za_schekoi'])
 def za_schekoi(m):
@@ -62,12 +44,23 @@ def za_schekoi(m):
 	bot.send_message(sid(m), s.balance.format(u.balance), reply_to_message_id = m.message_id)
 
 
+@bot.message_handler(commands = ['za_scheku'])
+def za_scheku(m):
+	u = User.cog(m)
+	u.transact(m)
+
+
+
 @bot.message_handler(content_types = ['text'])
 def reply(m):
-	print(uid(m))
-	print(m.from_user.username)
-	print(m.text, end="\n\n")
+	# print(uid(m))
+	# print(m.from_user.username)
+	# print(m.text, end="\n\n")
+	Message.add(m)
 	u = User.cog(m)
+	u.mine(m)
+	if u.balance == 0:
+		bot.send_message(sid(m), "Нищеброд просит за щеку", reply_to_message_id = m.message_id)
 
 
 
