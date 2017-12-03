@@ -1,6 +1,6 @@
 import re
 import json
-import datetime
+from datetime import time, datetime
 import threading # для отложенных сообщений
 from multiprocessing import Process
 from time import sleep
@@ -13,6 +13,7 @@ from telebot import TeleBot, types
 from config import *
 import strings as s # все строки хранятся здесь
 from models import User, System, Message
+from functions import *
 
 bot = TeleBot(token)
 
@@ -69,15 +70,12 @@ def reply(m):
 
 class Watcher:
 	def __call__(self):
+		midnight = time(hour = 0, minute = 0, second = 0, microsecond = 0)
 		while True:
-			now = datetime.datetime.now()
-			now = now.replace(microsecond = 0)
-			# print(now)
-			# try:
-			# 	for user in User.select():
-			# 		pass
-			# except:
-				# pass
+			cur_time = datetime.time(datetime.now())
+			cur_time = cur_time.replace(second = 0, microsecond = 0)
+			if cur_time == midnight:
+				backup_db()
 			sleep(1)
 
 
