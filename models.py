@@ -64,7 +64,7 @@ class User(BaseModel):
 			return False
 
 		try:
-			amount = int(re.findall(r'-?\d+', m.text)[0])
+			amount = int(re.findall(r'\s-?\d+', m.text)[0])
 			if amount <= 0:
 				return False
 		except:
