@@ -64,7 +64,9 @@ class User(BaseModel):
 			return False
 
 		try:
-			amount = int(re.findall(r'\d+', m.text)[0])
+			amount = int(re.findall(r'-?\d+', m.text)[0])
+			if amount <= 0:
+				return False
 		except:
 			amount = 0
 		if self.is_nischebrod(amount): # усли перевести хочет больше, чем у него есть
