@@ -4,6 +4,7 @@ import datetime
 import threading # для отложенных сообщений
 from multiprocessing import Process
 from time import sleep
+import random
 
 import sqlite3 as sqlite
 from telebot import TeleBot, types
@@ -61,7 +62,7 @@ def reply(m):
 	Message.add(m)
 	u = User.cog(m)
 	u.mine(m)
-	if u.balance == 0:
+	if u.balance == 0 and random.random() < 0.1:
 		bot.send_message(sid(m), "Нищеброд просит за щеку", reply_to_message_id = m.message_id)
 
 
