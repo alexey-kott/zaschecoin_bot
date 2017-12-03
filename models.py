@@ -37,7 +37,10 @@ class User(BaseModel):
 				bot.send_message(sid(m), s.greeting, reply_to_message_id = m.message_id)
 				return u
 		except Exception as e:
-			return User.select().where(User.user_id == uid(m)).get()
+			u = User.select().where(User.user_id == uid(m)).get()
+			u.username = m.from_user.username
+			u.save()
+			return u
 
 	def mine(self, m):
 		reward = System.calc_reward(m.text)
