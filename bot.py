@@ -5,8 +5,10 @@ import threading # для отложенных сообщений
 from multiprocessing import Process
 from time import sleep
 import random
+import ssl
 
 import sqlite3 as sqlite
+from aiohttp import web
 from telebot import TeleBot, types
 
 
@@ -15,7 +17,7 @@ import strings as s # все строки хранятся здесь
 from models import User, System, Message
 from functions import *
 
-bot = TeleBot(token)
+bot = TeleBot(API_TOKEN)
 
 sid = lambda m: m.chat.id # лямбды для определения адреса ответа
 uid = lambda m: m.from_user.id
@@ -85,10 +87,31 @@ class Watcher:
 if __name__ == '__main__':
 	watcher = Watcher()
 	w = Process(target = watcher)
-	# bot.polling(none_stop=True)
 	w.start()
-	while True:
-		try:
-			bot.polling(none_stop=True)
-		except:
-			sleep(3)
+
+	# Remove webhook, it fails sometimes the set if there is a previous webhook
+	bot.remove_webhook()
+
+
+	if LAUNCH_MODE == "DEV":
+		bot.polling(none_stop=True)
+	elif LAUNCH_MODE == "PROD":
+		app = web.Application()
+		app.router.add_post('/{token}/', handle)
+
+		
+		# Set webhook
+		bot.set_webhook(url=WEBHOOK_URL_BASE+WEBHOOK_URL_PATH,
+		                certificate=open(WEBHOOK_SSL_CERT, 'r'))
+
+		# Build ssl context
+		context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+		context.load_cert_chain(WEBHOOK_SSL_CERT, WEBHOOK_SSL_PRIV)
+
+		# Start aiohttp server
+		web.run_app(
+		    app,
+		    host=WEBHOOK_LISTEN,
+		    port=WEBHOOK_PORT,
+		    ssl_context=context,
+		)

@@ -9,7 +9,7 @@ from config import *
 import strings as s # все строки хранятся здесь
 from functions import *
 
-bot = TeleBot(token)
+bot = TeleBot(API_TOKEN)
 
 sid = lambda m: m.chat.id 
 uid = lambda m: m.from_user.id
