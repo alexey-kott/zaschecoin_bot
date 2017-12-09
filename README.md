@@ -6,4 +6,4 @@
 
 Bitcoin-кошелёк для донатов:
 1FL5Yc2sLinQjJVaTkp3sTQ9S6NUiXWcu4
-
+Monero: 4ADMdrSDNA6iichH7Q5vjmJzQDWwvRAsY9T3iS62DCteF6397P5xmH61znEjGnfYRSRE9HtjwyjeAYBPWGytaP7hCjsnFdE

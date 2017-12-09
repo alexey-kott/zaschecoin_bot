@@ -46,7 +46,7 @@ class User(BaseModel):
 	def mine(self, m):
 		reward = System.calc_reward(m.text)
 		if reward:
-			bot.send_message(self.user_id, "Тебе за щеку прилетело {} защекоинов".format(reward), reply_to_message_id = m.message_id)
+			bot.send_message(sid(m), "Тебе за щеку прилетело {} защекоинов".format(reward), reply_to_message_id = m.message_id)
 			self.balance += reward
 			self.save()
 		return 0
