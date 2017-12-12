@@ -153,6 +153,7 @@ class System(BaseModel):
 class Message(BaseModel):
 	msg_id 		= IntegerField(primary_key = True)
 	chat_id 	= IntegerField()
+	chat_name 	= TextField(null = True)
 	sender		= IntegerField()
 	text 		= TextField()
 	msg_hash    = TextField(index=True) # sha1 хеш в целочисленном представлении
@@ -162,6 +163,7 @@ class Message(BaseModel):
 		Message.create(
 			msg_id = m.message_id,
 			chat_id = sid(m),
+			chat_name = m.chat.title,
 			sender = uid(m),
 			text = m.text,
 			msg_hash = System.calc_hash(m.text),

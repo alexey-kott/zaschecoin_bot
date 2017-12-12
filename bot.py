@@ -66,6 +66,12 @@ def za_scheku(m):
 	u.transact(m)
 
 
+@bot.message_handler(commands = ['backup'])
+def backup(m):
+	backup_db()
+
+
+
 
 @bot.message_handler(content_types = ['text'])
 def reply(m):
