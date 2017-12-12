@@ -29,7 +29,7 @@ cid = lambda c: c.message.chat.id
 async def handle(request):
     if request.match_info.get('token') == bot.token:
         request_body_dict = await request.json()
-        update = telebot.types.Update.de_json(request_body_dict)
+        update = types.Update.de_json(request_body_dict)
         bot.process_new_updates([update])
         return web.Response()
     else:

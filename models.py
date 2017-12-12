@@ -27,6 +27,7 @@ class User(BaseModel):
 	first_name = TextField()
 	last_name = TextField(null = True)
 	balance = IntegerField(default = 3)
+	# last_transaction = DateTimeField(null = True)
 	
 	def cog(m):
 		username = m.from_user.username
@@ -54,7 +55,8 @@ class User(BaseModel):
 	def transact(self, m):
 		recipient_name = re.findall(r'(?<=\s@)\w+', m.text)
 		if not recipient_name:
-			bot.send_message(sid(m), "@{} просит за щеку".format(self.username), reply_to_message_id = m.message_id)
+			msg = bot.send_message(sid(m), "@{} просит за щеку".format(self.username), reply_to_message_id = m.message_id)
+			bot.pin_chat_message(sid(m), msg.message_id)
 			return False
 
 		try:
