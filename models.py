@@ -56,7 +56,10 @@ class User(BaseModel):
 		recipient_name = re.findall(r'(?<=\s@)\w+', m.text)
 		if not recipient_name:
 			msg = bot.send_message(sid(m), "@{} просит за щеку".format(self.username), reply_to_message_id = m.message_id)
-			bot.pin_chat_message(sid(m), msg.message_id)
+			try:
+				bot.pin_chat_message(sid(m), msg.message_id)
+			except:
+				pass
 			return False
 
 		try:
