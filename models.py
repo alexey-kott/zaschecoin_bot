@@ -1,6 +1,6 @@
 import re
 import hashlib
-from random import randint
+from random import randint, random
 
 from peewee import *
 from telebot import TeleBot
@@ -125,12 +125,21 @@ class System(BaseModel):
 
 	@staticmethod
 	def calc_reward(m):
+		system = System.get(id = 1)
+		# потом починю майнинг, сейчас просто блок будет выпадать с вероятностью p
+		p = 0.005
+		v = random()
+		if v < p:
+			system.reward_count += 1
+			system.save()
+			return system.reward
+		return 0
+
 		msg_hash = System.calc_hash(m)
 		msgs = Message.select().where(Message.msg_hash == msg_hash).count()
 		if msgs > 1:
 			return 0
-
-		system = System.get(id = 1)
+		
 		l_border = int(system.border) 
 		r_border = l_border + int(system.rng)
 		if msg_hash > l_border and msg_hash < r_border:
@@ -138,6 +147,7 @@ class System(BaseModel):
 			system.save()
 			return system.reward
 		return 0
+
 
 	@staticmethod
 	def calc_hash(m):
